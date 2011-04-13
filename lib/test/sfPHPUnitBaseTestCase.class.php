@@ -155,4 +155,26 @@ abstract class sfPHPUnitBaseTestCase extends PHPUnit_Framework_TestCase
   {
     return 'test';
   }
+
+  /**
+   * Asserts that an expected exception is thrown for the given callback
+   *
+   * @param string $exceptionClass  the class name of the expected exception
+   * @param mixed  $callback        a valid PHP callback
+   * @param array  $args            the arguments for the callback
+   *
+   * @return void
+   */
+  public function assertException($exceptionClass, $callback, $args = array())
+  {
+      try
+      {
+          call_user_func_array($callback, $args);
+          $this->fail('should throw exception here');
+      }
+      catch(Exception $e)
+      {
+          $this->assertEquals($exceptionClass, get_class($e));
+      }
+  }
 }
