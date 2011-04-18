@@ -73,9 +73,12 @@ class sfPHPUnitTest extends lime_test
    */
   public function ok($exp, $message = '')
   {
-    $result = (bool) $exp;
-    $this->testCase->assertTrue($result, $message);
-    return $result;
+    $this->testCase->assertTrue((bool) $exp, $message);
+
+    // a test will fail and abort, when exp is not true
+    // however the lime interface expects a return value
+    // for this method
+    return true;
   }
 
   /**
@@ -93,6 +96,8 @@ class sfPHPUnitTest extends lime_test
     // argument order is mixed up for phpunit
 
     $this->testCase->assertEquals($exp2, $exp1, $message);
+
+    return true;
   }
 
   /**
@@ -107,6 +112,8 @@ class sfPHPUnitTest extends lime_test
     // phpunit:
     //   assertNotEquals($expected, $actual)
     $this->testCase->assertNotEquals($exp2, $exp1, $message);
+
+    return true;
   }
 
   /**
@@ -194,6 +201,8 @@ class sfPHPUnitTest extends lime_test
   public function pass($message = '')
   {
     $this->testCase->assertTrue(true, $message);
+
+    return true;
   }
 
   /**
@@ -203,12 +212,9 @@ class sfPHPUnitTest extends lime_test
    */
   public function fail($message = '')
   {
-    // $this->testCase->fail could not be called here, otherwise
-    // the ugly exception
-    // "Exception thrown without a stack frame in Unknown on line 0" will be thrown
     $this->testCase->fail( $message );
-    // @TODO find a solution to be able calling the fail method directly
-    #$this->testCase->assertTrue(false, 'FAIL: ' . $message);
+
+    return false;
   }
 
   /**
