@@ -29,16 +29,6 @@ abstract class sfPHPUnitBaseFunctionalTestCase extends sfPHPUnitBaseTestCase
   private $testBrowser;
 
   /**
-   * Returns flag if test case should run in debug mode
-   *
-   * @return bool true on default
-   */
-  protected function isDebug()
-  {
-    return true;
-  }
-
-  /**
    * setUp method for PHPUnit
    *
    */
@@ -47,22 +37,47 @@ abstract class sfPHPUnitBaseFunctionalTestCase extends sfPHPUnitBaseTestCase
     // Here we have to initialize the according context for the test case.
     // As this initialization is quite expensive, the script tries to
     // to do this as rare as possible.
+    // Testing different applications needs "switching" the context,
+    // this is to be checked here, too.
     $app = $this->getApplication();
+    $oldApp = null;
 
     if (!sfContext::hasInstance($app))
     {
-      $configuration = ProjectConfiguration::getApplicationConfiguration($app, $this->getEnvironment(), $this->isDebug());
-      sfContext::createInstance($configuration, $app);
+      // is another app already loaded?
+      if (sfContext::hasInstance())
+      {
+        // mark the name of this known instance
+        $oldApp = sfContext::getInstance()->getConfiguration()->getApplication();
+
+      }
+    }
+    else
+    {
+      $oldApp = $app;
+    }
+
+    $needNewInstance = ($app != $oldApp);
+    // Switching the context does not work as expected.
+    // When a different context instance is known at this point
+    // it is destroyed first.
+    if ($oldApp && $needNewInstance)
+    {
+        $oldInstance = sfContext::getInstance($oldApp);
+        $oldInstance->shutdown();
+        $this->context = null;
+    }
+
+    if ($needNewInstance) {
+        
+      $configuration = $this->getApplicationConfiguration();
+      sfContext::createInstance($this->getApplicationConfiguration(), $app);
+      
+      sfToolkit::clearDirectory(sfConfig::get('sf_app_cache_dir'));
       // We have to create a configuration first before the symfony lib is defined.
       // this is the only but ugly chance for including the lime lib correctly
       // without creating a project configuration instance somewhere before
       require_once $configuration->getSymfonyLibDir().'/vendor/lime/lime.php';
-    }
-
-    // do we have to switch the context?
-    if($app != sfContext::getInstance()->getConfiguration()->getApplication())
-    {
-      sfContext::switchTo($app);
     }
 
     // autoloading ready, continue
@@ -99,9 +114,9 @@ abstract class sfPHPUnitBaseFunctionalTestCase extends sfPHPUnitBaseTestCase
   {
     // a valid context is created already in the functional bootstrap file
     // there is nothing more to do here, than fetching the current context instance
-    if(!$this->context)
+    if (!$this->context)
     {
-      $this->context = sfContext::getInstance();
+      $this->context = sfContext::getInstance($this->getApplication());
     }
 
     return $this->context;
