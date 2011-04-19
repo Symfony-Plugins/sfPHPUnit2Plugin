@@ -33,11 +33,11 @@ abstract class sfPHPUnitBaseTestCase extends PHPUnit_Framework_TestCase
   private $context = null;
 
   /**
-   * The sfApplicationConfiguration instance
+   * A mapping of known sfApplicationConfiguration instances
    *
    * @var sfApplicationConfiguration
    */
-  private $applicationConfiguration = null;
+  private $applicationConfigurations = array();
 
   /**
    * Dev hook for custom "setUp" stuff
@@ -79,12 +79,14 @@ abstract class sfPHPUnitBaseTestCase extends PHPUnit_Framework_TestCase
    */
   protected function getApplicationConfiguration()
   {
-  	if (is_null($this->applicationConfiguration))
-  	{
-  		$this->applicationConfiguration = ProjectConfiguration::getApplicationConfiguration($this->getApplication(), $this->getEnvironment(), true);
-  	}
+    $key = $this->getApplication() . '_' . $this->getEnvironment() . '_' . intval($this->isDebug());
 
-  	return $this->applicationConfiguration;
+    if (!isset($this->applicationConfigurations[$key]))
+    {
+      $this->applicationConfigurations[$key] = ProjectConfiguration::getApplicationConfiguration($this->getApplication(), $this->getEnvironment(), $this->isDebug());
+    }
+
+    return $this->applicationConfigurations[$key];
   }
 
   /**
@@ -154,6 +156,16 @@ abstract class sfPHPUnitBaseTestCase extends PHPUnit_Framework_TestCase
   protected function getEnvironment()
   {
     return 'test';
+  }
+
+  /**
+   * Returns flag if test case should run in debug mode
+   *
+   * @return bool true on default
+   */
+  protected function isDebug()
+  {
+    return true;
   }
 
   /**
