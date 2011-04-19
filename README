@@ -66,6 +66,9 @@ This generation is not done automatically when a new module is generated and has
         $ ./symfony phpunit:generate-selenium frontend home
 
 ## Usage ##
+It is recommended to call the test classes directly with the phpunit command line runner.
+This way is more powerful and handy than using a symfony task for it.
+
 ### Unit tests ###
 The unit test given in the [official documenation](http://www.symfony-project.org/book/1_2/15-Unit-and-Functional-Testing#chapter_15_unit_tests "Unit and Functional Testing") would look like this:
 
@@ -238,6 +241,8 @@ Executing all tests (process isolation option required!):
 Executing all tests using custom test suites defined in the phpunit.xml(.dist):
 
         $ ./symfony phpunit:test-all --configuration
+        $ # equal to
+        $ phpunit test/phpunit
 
 Executing a unit test within a plugin:
 
@@ -304,6 +309,10 @@ Content of a plugin test file:
           // test something
         }
       }
+
+## Contributors ##
+  * Gordon Franke
+  * Jan Molak
 
 ## TODO ##
   * add complete support for plugin testing

@@ -61,6 +61,12 @@ abstract class sfPHPUnitBaseFunctionalTestCase extends sfPHPUnitBaseTestCase
     // Switching the context does not work as expected.
     // When a different context instance is known at this point
     // it is destroyed first.
+    // This mechanism does not guarantee a complete switch
+    // of the context.
+    // All loaded classes can not be unloaded and there will
+    // occure class conflicts (e.g the myUser class) anyway.
+    // Therefore functional tests for several applications have to be run
+    // with activated process-isolation!
     if ($oldApp && $needNewInstance)
     {
         $oldInstance = sfContext::getInstance($oldApp);
@@ -81,7 +87,9 @@ abstract class sfPHPUnitBaseFunctionalTestCase extends sfPHPUnitBaseTestCase
     }
 
     // autoloading ready, continue
-    $this->testBrowser = new sfTestFunctional(new sfBrowser(), $this->getTest());
+    $browser = sfConfig::get('app_sf_php_unit_2_plugin_class_browser', 'sfBrowser');
+    $tester = sfConfig::get('app_sf_php_unit_2_plugin_class_functional', 'sfTestFunctional');
+    $this->testBrowser = new $tester(new $browser, $this->getTest());
 
     $this->_start();
   }
