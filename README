@@ -258,7 +258,8 @@ When a template file does not exist in the project data dir, the plugin will tak
 Placing a file in *your_project/data/sfPHPUnit2Plugin/template/unit/unit_test.tpl* will overwrite the content of a unit test template. The next time a unit test is generated, the plugin will use this custom content.
 
 ## Some Hints ##
-  * **Functional tests of several applications have to be run with the "process isolation" PHPUnit option (only available in PHPUnit 3.4)!**
+  * **Functional tests of several applications have to be run with the "process isolation" PHPUnit option (only available since PHPUnit 3.4)!**
+  * Switch the controller to "sfPHPUnit2FrontWebController" for the test environment when you use process isolation in combination with functional test. Otherwise uncaught exception will not be handled correctly by PHPUnit (Exception thrown without a stack frame in Unknown on line 0 ...).
   * Use the *colors* option of PHPUnit to get a colorful representation of your test results
   * You do not like the PHPUnit syntax? Use **$this->getTest()** to retrieve a instance of sfPHPUnitTest, which mimics the lime-like interface!
   * Use the **_start** and **_end** methods for doing something just before and after a test (please do not overwrite the setUp and tearDown methods)!
