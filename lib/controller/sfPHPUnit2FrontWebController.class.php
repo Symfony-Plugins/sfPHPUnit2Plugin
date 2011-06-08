@@ -45,6 +45,10 @@ class sfPHPUnit2FrontWebController extends sfWebController{
       // make the first request
       $this->forward($moduleName, $actionName);
     }
+    catch (sfStopException $e)
+    {
+        // ignore, do nothing
+    }
     catch (Exception $e)
     {
       // Throwing an exception here will break the exception handling
